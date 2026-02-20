@@ -1,0 +1,8 @@
+{
+  "name": "2dgamebotwindows",
+  "description": "Development workflow for Windows Python 2D game automation bots. Command book skills, CV detection, input simulation, screen capture, movement systems. Enforces timing safety, key release, bounded waits, and action type correctness.",
+  "author": {
+    "name": "Darren Yeoh",
+    "url": "https://github.com/dyeoh"
+  }
+}

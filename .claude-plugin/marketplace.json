@@ -1,0 +1,12 @@
+{
+  "name": "dyeoh-plugins",
+  "owner": { "name": "Darren Yeoh", "url": "https://github.com/dyeoh" },
+  "plugins": [
+    {
+      "name": "2dgamebotwindows",
+      "source": "./",
+      "description": "Development workflow for Windows Python 2D game automation bots — command books, CV detection, input simulation, screen capture, movement systems.",
+      "version": "1.0.0"
+    }
+  ]
+}
