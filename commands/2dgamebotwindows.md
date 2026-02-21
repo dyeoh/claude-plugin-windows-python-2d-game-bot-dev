@@ -137,6 +137,13 @@ Initial request: $ARGUMENTS
 - [ ] WindowState transitions explicit
 - [ ] State change via BotStateManager
 
+### API Server Checklist
+- [ ] Thread safety for cross-thread calls (asyncio.run_coroutine_threadsafe)
+- [ ] Bounded WS queue (drops oldest if client slow)
+- [ ] Event bus emit() is fire-and-forget (no blocking)
+- [ ] API endpoints localhost-only
+- [ ] Frame access via config.capture.frame (GIL-atomic reference swap)
+
 4. **Timing impact analysis** — how changes affect input lag, frame drops, CPU
 5. **Constants inventory** — all magic numbers replaced with named constants
 

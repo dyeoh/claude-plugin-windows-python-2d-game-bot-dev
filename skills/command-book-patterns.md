@@ -193,6 +193,32 @@ class FlashJump(BaseFlashJump):
 # ... add skills
 ```
 
+## Consumable/Buff Management
+
+Wealth potions, union meso coupons, and EXP buffs are pressed from the Buff class in each command book. The pattern is shared across all 16 classes:
+
+```python
+class Buff(Command):
+    ACTION_TYPE = ActionType.RAW
+
+    def __init__(self):
+        super().__init__(locals())
+        self.buff_time = 0
+
+    def main(self):
+        now = time.time()
+        # Class-specific buffs
+        if self.buff_time == 0 or now - self.buff_time > settings.buff_cooldown:
+            press(Key.BUFF_1, 2, down_time=t.buff_delay())
+            self.buff_time = now
+```
+
+Key points:
+- Wealth potion + union meso use ~30.5 min timer
+- Buff keys are class-specific (Key class per command book)
+- `settings.buff_cooldown` is the configurable timer
+- Future: ConsumableManager in `src/modules/consumables.py` will centralize potion logic with buff icon detection for depletion awareness
+
 ## Key Files
 
 | File | Purpose |
@@ -201,4 +227,16 @@ class FlashJump(BaseFlashJump):
 | `src/common/action_types.py` | ActionType enum, ACTION_TIMING table |
 | `resources/command_books/_template.py` | Template for new command books |
 | `resources/command_books/*.py` | Per-class skill definitions (16 files) |
-| `docs/command-books.md` | Command book documentation |
+
+## Abort/Timer Reset Pattern
+
+When aborting a timed visit or operation, always reset the timer to prevent infinite retry:
+
+```python
+def _abort_visit(self):
+    """Abort current visit and reset timer to prevent infinite retry."""
+    self.last_visit_time = time.perf_counter()  # Critical: prevents re-triggering
+    self._close_windows()
+```
+
+Without the timer reset, the bot would immediately retry the aborted operation on the next loop iteration.

@@ -126,5 +126,5 @@ Three backends, selectable via GUI:
 - `src/modules/rune_solver.py` — Rune solver backends
 - `src/modules/notifier.py` — Detection consumers (rune, death, other players)
 - `src/detection/detection.py` — TF model pipeline
-- `docs/detection.md` — Detection system documentation
-- `docs/capture.md` — Capture system documentation
+- `src/modules/api_server.py` — Template create/match API endpoints
+- `src/common/events.py` — Structured event system for detection events

@@ -60,10 +60,31 @@ Scan everything and write `.gamebot-cache.md`.
 
 **9. Resource Inventory**
 - Count: command books, keybindings, routines, layouts
-- List: docs/ files
 
-**10. Documentation**
-- Read all `docs/*.md` for current architecture documentation
+**10. Dev Bridge**
+- Read `src/modules/api_server.py` → API server endpoints, WS broadcast, thread model
+- Read `mcp_server.py` → MCP tools, HTTP routes to bot API
+- Read `src/common/events.py` → EventBus, ring buffer, JSONL logging
+- Read `.mcp.json` → Claude Code MCP configuration
+
+**11. Asset Directory Structure**
+- Glob `assets/**/*` → verify organization:
+  - `assets/detection/minimap/` — minimap templates (player, rune, corners, elite, other_player)
+  - `assets/detection/buffs/` — buff icon templates (rune_buff, wealth, union_meso)
+  - `assets/detection/status/` — status effects (exposed, graveyard, petrify_skull, unablemush)
+  - `assets/ui/buttons/` — UI buttons (ok, yes, add_slots, exit_cash_storage)
+  - `assets/ui/menu/` — ESC menu items (character_header, adventure_header, cs, change_character, etc.)
+  - `assets/ui/dialog/` — dialog templates (revive, end_chat, unable_cc)
+  - `assets/ui/cash_shop/` — cash shop elements
+  - `assets/ui/navigation/` — world map, bookmarks
+  - `assets/ui/storage/` — storage UI
+  - `assets/ui/daily/` — scheduler, daily gift
+  - `assets/ui/game/quickslot/` — quickslot HUD (menu_icon)
+  - `assets/skills/` — skill icons for detection
+  - `assets/app/` — application icons
+  - `assets/alerts/` — sound files
+  - `assets/pin/` — PIN entry templates
+  - `assets/models/` — TF rune solver model
 
 ### Targeted Exploration
 
@@ -73,7 +94,7 @@ Given a specific scope (e.g., "command-book: add new skill for bishop"):
 2. Trace the call chain from entry points to the code being modified
 3. Identify all consumers of any function/class being changed
 4. Document existing patterns that the new code must follow
-5. Check `docs/` for relevant documentation
+5. Check CLAUDE.md and plugin skills for relevant patterns
 6. Report findings as structured markdown
 
 ## Cache Output Format
@@ -129,6 +150,11 @@ Write `.gamebot-cache.md` with this structure:
 ## Resource Inventory
 | Type | Count | Location |
 |------|-------|----------|
+| ... | ... | ... |
+
+## Asset Directory
+| Category | Path | File Count |
+|----------|------|-----------|
 | ... | ... | ... |
 
 ## Key Patterns

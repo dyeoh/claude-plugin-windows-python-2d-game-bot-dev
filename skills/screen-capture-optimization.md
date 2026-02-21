@@ -149,5 +149,3 @@ If a backend fails repeatedly during operation (GPU driver reset, display discon
 |------|---------|
 | `src/modules/capture.py` | Capture module, backend selection, `_WGCCamera`, adaptive FPS |
 | `main.py` | `timeBeginPeriod(1)` timer setup, cleanup handlers |
-| `docs/capture.md` | Capture system documentation |
-| `docs/hyperv-capture.md` | VM-specific capture considerations |

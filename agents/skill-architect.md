@@ -101,6 +101,15 @@ Strategies: retry with backoff (max 2-3), state reset, fallback action, escalate
 - Account for VM vs bare metal variance via performance profiles
 - Anti-detection jitter is handled automatically by the framework (±15%)
 
+### 8. Design Consumable Integration
+
+If the skill involves buff management or potion usage:
+- Check if the consumable is class-specific or shared (wealth, union meso, EXP are shared)
+- Use buff icon detection templates in `assets/detection/buffs/` to verify application
+- Handle "You cannot use Consumables at this moment" chat message (not a popup)
+- Track depletion state: pressed key but buff icon didn't appear after 1-2s
+- Emit events on buff application and depletion for monitoring
+
 ## Review Checklist
 
 - [ ] **State machine explicit** — states named, transitions have guards
@@ -131,5 +140,4 @@ Always check these before designing:
 - `src/routine/components.py` — 11 base classes and their hooks
 - `src/common/action_types.py` — ActionType enum and timing table
 - `src/common/movement.py` — MovementConfig and factory functions
-- `docs/command-books.md` — Command book documentation
-- `docs/movement.md` — Movement system documentation
+- `src/common/events.py` — Structured event system for skill events

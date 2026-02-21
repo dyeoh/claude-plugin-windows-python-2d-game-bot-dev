@@ -31,7 +31,7 @@ You are a research analyst for a Python 2D game automation bot project. You inve
 - Read the relevant source files to understand the current implementation
 - Identify the specific failure mode or limitation
 - Quantify the problem: how often, how severe, what's the impact
-- Check `docs/` for prior analysis or design rationale
+- Check CLAUDE.md and plugin skills for prior analysis or design rationale
 
 ### 2. Search for Prior Art
 
@@ -119,6 +119,5 @@ Select the best option with clear rationale. Address:
 - `src/modules/capture.py` — Capture pipeline, backend selection, VM patches
 - `src/common/timing.py` — Timing constants, adaptive_sleep
 - `src/common/utils.py` — multi_match, sub-pixel refinement
-- `docs/movement.md` — Movement system design rationale
-- `docs/capture.md` — Capture system architecture
-- `docs/hyperv-capture.md` — VM-specific capture considerations
+- `src/modules/api_server.py` — API server (HTTP+WS) for dev tooling
+- `src/common/events.py` — Structured event system (ring buffer + JSONL)

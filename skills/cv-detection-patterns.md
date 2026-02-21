@@ -131,10 +131,56 @@ def _subpixel_refine(result, py, px):
 
 ## Adding New Templates
 
-1. Save template image in `assets/` (PNG, BGR format)
+1. Save template in organized `assets/` subdirectory:
+   - `assets/detection/minimap/` — minimap overlays (player, rune, corners)
+   - `assets/detection/buffs/` — buff icon monitoring
+   - `assets/detection/status/` — status effects (exposed, graveyard, petrify)
+   - `assets/ui/buttons/` — UI buttons (ok, yes, add_slots)
+   - `assets/ui/menu/` — ESC game menu items
+   - `assets/ui/dialog/` — popup dialogs (revive, end_chat, unable_cc)
+   - `assets/ui/cash_shop/` — cash shop elements
+   - `assets/ui/navigation/` — world map, bookmarks
+   - `assets/ui/storage/` — storage UI elements
+   - `assets/ui/daily/` — scheduler, daily gift
+   - `assets/ui/inventory/` — inventory headers
+   - `assets/ui/character/` — character switch
+   - `assets/ui/town/` — town menu
+   - `assets/ui/union/` — union UI
+   - `assets/skills/` — skill icons for detection
+   - `assets/ui/game/quickslot/` — quickslot HUD elements
 2. Register in `src/common/templates.py` with threshold value
 3. Use via `multi_match(frame, template, threshold, roi=region)`
 4. Consider dHash pre-screen if detection runs every frame
+
+## Stray Window Detection
+
+Detects when a game window/dialog is blocking input by checking for menu icon absence:
+
+```python
+# In notifier.py — 3 consecutive misses trigger ESC press
+menu_icon = multi_match(frame, MENU_ICON, threshold=0.90, roi=quickslot_roi)
+if not menu_icon:
+    miss_count += 1
+    if miss_count >= 3:
+        press('esc')
+        miss_count = 0
+```
+
+The menu icon (quickslot area) is always visible during normal gameplay. Its absence indicates a window/dialog is open. This handles:
+- ESC menu stuck open after failed operations
+- Post-revive cleanup (ESC cascade with menu icon verification)
+- Unexpected dialog popups
+
+## Buff Icon Detection
+
+For monitoring active buffs (wealth potion, union meso, EXP):
+
+1. Capture buff icons from the buff bar (top-right area) using `create_template`
+2. Save to `assets/detection/buffs/` (e.g., `wealth.png`, `union_meso.png`)
+3. Check ROI of buff bar area after pressing potion key
+4. If buff icon not found after press → potion depleted
+
+Templates: `assets/detection/buffs/rune_buff.jpg` (existing), add wealth/union/exp as needed.
 
 ## Key Files
 
@@ -146,4 +192,3 @@ def _subpixel_refine(result, py, px):
 | `src/modules/rune_solver.py` | Rune solver backends |
 | `src/modules/notifier.py` | Detection consumers |
 | `src/detection/detection.py` | TF model pipeline |
-| `docs/detection.md` | Detection system documentation |

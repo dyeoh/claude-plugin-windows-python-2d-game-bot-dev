@@ -1,6 +1,6 @@
 # Windows Python 2D Game Bot Dev Plugin
 
-Claude Code plugin for developing Windows Python 2D game automation bots. Provides a structured 7-phase development workflow, 5 specialized agents, and deep domain knowledge for command books, CV detection, input simulation, screen capture, and movement systems.
+Claude Code plugin for developing Windows Python 2D game automation bots. Provides a structured 7-phase development workflow, 5 specialized agents, and deep domain knowledge for command books, CV detection, input simulation, screen capture, movement systems, and API/MCP dev bridge integration.
 
 ## Installation
 
@@ -93,3 +93,5 @@ The existing prompts remain available for standalone use outside the plugin work
 - tkinter for GUI
 - Interception driver for input simulation
 - bettercam / windows-capture / mss for screen capture
+- aiohttp for embedded API server
+- MCP SDK + httpx for Claude Code bridge

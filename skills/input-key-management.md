@@ -184,4 +184,3 @@ From `src/common/timing.py`:
 | `src/common/click_verify.py` | ROI pixel-change click verification |
 | `src/common/command_timing.py` | Timing helpers |
 | `src/common/timing.py` | Fixed timing constants |
-| `docs/input.md` | Input system documentation |

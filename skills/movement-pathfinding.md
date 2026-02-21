@@ -159,4 +159,3 @@ Three-layer recovery when rope fails at certain X positions:
 | `src/routine/layout.py` | Platform graph, A* shortest path |
 | `src/common/utils.py` | distance(), position utilities |
 | `src/common/timing.py` | Performance profiles, adaptive_sleep |
-| `docs/movement.md` | Movement system documentation |
