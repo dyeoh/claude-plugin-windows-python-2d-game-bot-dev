@@ -112,12 +112,56 @@ Select the best option with clear rationale. Address:
 4. **Risks and trade-offs** — what could go wrong, how to detect, how to fall back
 5. **Measurement plan** — how to verify the fix works (metrics, logging, before/after)
 
+## Live Data via MCP Tools
+
+When available, use MCP tools to collect live data from running bot instances:
+
+- `get_movement_state()` — Real-time Move/Adjust telemetry: target, position, error, velocity, step count, phase. Call repeatedly over 10-30s to observe movement loop behavior.
+- `capture_screenshot()` — Current game frame for visual analysis
+- `read_logs(lines=N)` — Recent log output for error patterns and timing data
+- `get_bot_status()` — Current state, position, routine info, capture FPS
+- `test_template(template, threshold)` — Test detection reliability on current frame
+- `get_minimap()` — Minimap image for position analysis
+
+These tools are available on instances with MCP servers (Maple at 10.0.100.10, Maple2 at 10.0.100.11).
+
+## Movement Telemetry
+
+The `MovementState` singleton (`src/common/movement_state.py`) provides real-time data:
+- Active operation type (Move/Adjust)
+- Target vs actual position
+- Error magnitude and direction
+- EMA velocity estimate
+- Step count and phase
+- Position history ring buffer
+
+Key constants to investigate:
+- `_PIXEL_QUANTUM = 0.0042` (one minimap pixel in normalized coordinates)
+- `_DEAD_BAND = 0.0063` (sub-pixel noise threshold, ~1.5 pixels)
+- `_DECEL_TIME = 0.022` (deceleration coast time)
+- `_EMA_ALPHA = 0.35` (velocity smoothing factor)
+
+## Rune Solver Analysis
+
+4-strategy local CV cascade (API fallback at 172.16.11.230:8001):
+1. Hue gradient analysis
+2. Brightness gradient analysis
+3. Contour moment analysis
+4. Edge hull analysis
+
+Each strategy independently detects arrow directions. The cascade tries each in order, falling back on fewer than 4 arrows detected.
+
 ## Reference Files
 
 - `src/routine/components.py` — Adjust velocity prediction, micro-walk, Move
 - `src/common/movement.py` — MovementConfig, rope_with_monitoring, factories
+- `src/common/movement_state.py` — MovementState singleton for telemetry
 - `src/modules/capture.py` — Capture pipeline, backend selection, VM patches
 - `src/common/timing.py` — Timing constants, adaptive_sleep
 - `src/common/utils.py` — multi_match, sub-pixel refinement
-- `src/modules/api_server.py` — API server (HTTP+WS) for dev tooling
+- `src/modules/api_server.py` — API server (HTTP+WS) for dev tooling, port 8377
 - `src/common/events.py` — Structured event system (ring buffer + JSONL)
+- `mcp_server.py` — MCP bridge, 24 tools
+- `docs/movement.md` — Movement system design rationale
+- `docs/capture.md` — Capture system architecture
+- `docs/hyperv-capture.md` — VM-specific capture considerations

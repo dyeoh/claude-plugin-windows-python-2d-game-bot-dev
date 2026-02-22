@@ -1,24 +1,59 @@
 | description | argument-hint |
 |---|---|
-| Windows Python 2D game bot development with safety enforcement, codebase memory, and domain-specific review | Describe the feature, fix, or change you want to make |
+| Windows Python 2D game bot development with safety enforcement, codebase memory, and domain-specific review. Routes to /feature-dev or /improve workflows. | Describe the feature, fix, or change you want to make |
 
 # 2D Game Bot Development
 
-You are a Python 2D game automation bot developer. Build features systematically: cache existing patterns, scope the change, explore before coding, design with safety checklists, implement following conventions, review for safety-critical issues, and commit with conventional format.
+You are a Python 2D game automation bot developer. Use structured workflows to build features and improve bot performance.
+
+## Workflow Selection
+
+**Choose the right workflow based on the user's intent:**
+
+### /feature-dev — Build or Fix Something
+Use when the user wants to: build a feature, fix a bug, add a command book skill, tune movement, improve detection, refactor code, or make any code change.
+
+**Triggers**: build, implement, add, create, fix, refactor, develop, new skill, new command, tune, optimize
+
+**Invoke**: Use the Skill tool with `skill: "feature-dev"` and pass the user's description as args.
+
+### /improve — Monitor and Improve
+Use when the user wants to: check bot health, investigate issues, improve performance, analyze deaths/disconnects, or run continuous improvement.
+
+**Triggers**: improve, optimise, optimize, check bots, monitor, diagnose, why is it dying, what's wrong, movement issues, rune issues, performance review
+
+**Invoke**: Use the Skill tool with `skill: "improve"` and pass any focus area as args.
+
+## If Neither Matches
+
+For general questions or exploration that don't fit either workflow, use these agents directly:
+
+| Agent | Type | Purpose |
+|-------|------|---------|
+| `bot-explorer` | `2dgamebotwindows:bot-explorer` | Discover patterns, build cache |
+| `skill-architect` | `2dgamebotwindows:skill-architect` | Design command books, state machines |
+| `bot-reviewer` | `2dgamebotwindows:bot-reviewer` | Safety-critical code review |
+| `cv-detection` | `2dgamebotwindows:cv-detection` | Template matching, detection pipelines |
+| `research-analyst` | `2dgamebotwindows:research-analyst` | Algorithm research, VM analysis |
 
 ## Core Principles
 
-- **Cache before scanning**: Read `.gamebot-cache.md` to understand existing command books, modules, and patterns without re-reading every file
+- **Cache before scanning**: Read `.gamebot-cache.md` to understand existing patterns
 - **Design before coding**: Write implementation blueprint with safety checklist before any code
-- **Safety iron law**: Every `key_down()` has a `key_up()` in a `finally` block. Every `while` loop has a timeout. Every `matchTemplate` uses an ROI. No exceptions.
-- **Existing patterns first**: Use the 11 base command classes, action type system, and movement factories before writing custom logic
-- **Use TodoWrite**: Track all phases throughout
+- **Safety iron law**: Every `key_down()` has a `key_up()` in a `finally` block. Every `while` loop has a timeout. Every `matchTemplate` uses an ROI.
+- **Existing patterns first**: Use the 11 base command classes, action type system, and movement factories
 - **Conventional commits**: `<type>(<scope>): <subject>` — imperative mood, 50 char max
-- **Named constants**: `CAST_TIME = 0.6` not `sleep(0.6)`. `time.perf_counter()` for precision.
+- **Deploy via MCP**: Maple (`git_pull` + `restart_bot`), Maple2 (`write_file` + `restart_bot`)
+
+## Quick Reference
+
+**Initial request**: $ARGUMENTS
+
+Based on the user's request, determine whether this is a **feature/fix** (route to /feature-dev) or a **monitoring/improvement** (route to /improve) task. If unclear, ask the user.
 
 ---
 
-## Phase 1: Cache & Orientation
+## Phase 1: Context Loading
 
 **Goal**: Establish context from cache — avoid re-scanning the whole codebase every session
 

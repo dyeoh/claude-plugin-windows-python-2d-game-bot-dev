@@ -86,6 +86,22 @@ Scan everything and write `.gamebot-cache.md`.
   - `assets/pin/` — PIN entry templates
   - `assets/models/` — TF rune solver model
 
+**11. API Server & MCP Bridge**
+- Read `src/modules/api_server.py` → HTTP+WS routes, port 8377
+- Read `mcp_server.py` → MCP tool definitions (24 tools)
+- Index all API endpoints: `/status`, `/bot/*`, `/system/*`
+- Track MCP tools: capture, input, movement, templates, deployment, actions
+
+**12. Event System**
+- Read `src/common/events.py` → EventBus, ring buffer (1000), JSONL logging
+- Index all event types: movement.adjust, movement.move, state_change, death, disconnect, rune_detected
+- Track event producers and consumers
+
+**13. Movement Telemetry**
+- Read `src/common/movement_state.py` → MovementState singleton
+- Track: active operation, target, position, error, velocity, step count, phase
+- API endpoint: `GET /bot/movement`
+
 ### Targeted Exploration
 
 Given a specific scope (e.g., "command-book: add new skill for bishop"):
@@ -157,13 +173,32 @@ Write `.gamebot-cache.md` with this structure:
 |----------|------|-----------|
 | ... | ... | ... |
 
+## API Routes
+| Method | Path | Description |
+|--------|------|-------------|
+| ... | ... | ... |
+
+## MCP Tools
+| Tool | Category | Description |
+|------|----------|-------------|
+| ... | ... | ... |
+
+## Event Types
+| Event | Producer | Data |
+|-------|----------|------|
+| ... | ... | ... |
+
 ## Key Patterns
 - Command execution: Command.execute() → pre-settle/grounded → release mobbing → main() → restore mobbing → post-delay
 - Movement: Move uses A* path → continuous walk (short) or step() (long)
-- Adjust: priority Y-recovery → X-micro-walk → Y-adjustment, velocity prediction
+- Adjust: priority Y-recovery → X-micro-walk → Y-adjustment, velocity prediction with EMA
 - Detection: ROI crop → dHash pre-screen → matchTemplate → NMS → sub-pixel
 - Capture: bettercam → WGC → mss, adaptive FPS 60/15
 - State: BotStateManager observer pattern, config namespace for shared state
+- Events: EventBus emit() alongside print() (additive, not replacement)
+- API: aiohttp HTTP+WS on daemon thread, port 8377, 24 MCP tools
+- Rune: API solver (172.16.11.230:8001) with local CV fallback (4-strategy cascade)
+- Movement telemetry: MovementState singleton + GET /bot/movement + MCP get_movement_state
 ```
 
 ## Tools Usage

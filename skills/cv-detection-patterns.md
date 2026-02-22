@@ -116,9 +116,40 @@ def _subpixel_refine(result, py, px):
 
 | Backend | Method | Dependencies | Accuracy |
 |---------|--------|-------------|----------|
-| API | POST screenshot to solver service | External service at `localhost:8001` | Highest |
-| Local CV | Sobel gradient + contour analysis | OpenCV only | Good |
+| API | POST screenshot to solver service | External service at `172.16.11.230:8001` | Highest |
+| Local CV | 4-strategy cascade | OpenCV only | Good |
 | TF Model | HSV filter → Canny → inference | TensorFlow | Good (legacy) |
+
+### Local CV 4-Strategy Cascade
+
+The local solver tries four independent strategies in order, advancing when fewer than 4 arrows are detected:
+
+1. **Hue gradient** — HSV hue channel gradient analysis for arrow direction
+2. **Brightness gradient** — Grayscale intensity gradient for arrow tips
+3. **Contour moment** — Shape contour analysis with cv2.moments()-based direction
+4. **Edge hull** — Canny edge detection with convex hull direction vectors
+
+Each strategy independently identifies arrow directions in the crop region `frame[143:371, 381:957]`. The cascade provides resilience against variable backgrounds and lighting.
+
+### Spinning Runes
+
+A spinning rune (rotating instead of stationary) indicates the game server has detected bot-like behavior. Usually caused by:
+- Virtual input methods instead of Interception driver
+- Suspicious movement patterns (perfect timing, identical paths)
+- Being in the same channel too long without natural behavior variance
+
+## MCP Template Testing
+
+When MCP tools are available, test detection pipelines against live game state:
+
+```
+test_template(template="ui/game/death_ui.png", threshold=0.8)  # Test match
+create_template(name="ui/new_element.png", x, y, w, h)         # Capture new template
+capture_screenshot(region="381,143,576,228")                     # Capture rune region
+list_templates(subdir="ui/game")                                 # Browse templates
+```
+
+Use `test_template` to validate threshold choices across different maps and game states.
 
 ## Performance Rules
 

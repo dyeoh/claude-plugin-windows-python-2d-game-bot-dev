@@ -174,6 +174,26 @@ From `src/common/timing.py`:
 | `position_update` | 30ms | Position update after movement |
 | `frame_stabilize` | 100ms | Frame stabilization wait |
 
+## Interception Device Persistence
+
+`pyinterception` is installed as a `.egg` in system site-packages on VMs — NOT from the project's `pyinterception/src/` tree. The `initialize_devices()` function in the egg can't find `.settings/devices.json` because `__file__`-based path resolves to `Python311/` instead of the project root.
+
+**Fix**: `_apply_frozen_devices()` in `src/gui/settings/devices.py` runs at GUI startup, uses the project-local path (always correct), and explicitly sets `interception.inputs.keyboard` and `.mouse` globals.
+
+Device IDs default to 1/11 from the egg; the GUI fix overrides them to the correct frozen values (e.g., 5/15 on Maple2).
+
+## Hyper-V Click Reliability
+
+On Hyper-V VMs, clicks in certain contexts (Cash Shop, UI dialogs) can fail because the cursor hasn't arrived at the target position before the click fires.
+
+**Fix**: Use `_CLICK_MOVE_DELAY=0.8` and `MOUSEEVENTF_ABSOLUTE` to ensure the cursor physically arrives before the click event. This is particularly important for Cash Shop pet storage/retrieval operations.
+
+## Gameplay Patterns
+
+- **Cash Shop access**: Always go to town (Henesys) first, confirm town via "town menu expander" template, then enter Cash Shop
+- **Game window closing**: Use `close_with_verification()` pattern (not blind ESC presses)
+- **Operational clicks**: Use `operational_click()` and `operational_press()` for non-combat interactions (these skip mobbing key management)
+
 ## Key Files
 
 | File | Purpose |
@@ -184,3 +204,5 @@ From `src/common/timing.py`:
 | `src/common/click_verify.py` | ROI pixel-change click verification |
 | `src/common/command_timing.py` | Timing helpers |
 | `src/common/timing.py` | Fixed timing constants |
+| `src/gui/settings/devices.py` | Interception device persistence fix |
+| `docs/input.md` | Input system documentation |

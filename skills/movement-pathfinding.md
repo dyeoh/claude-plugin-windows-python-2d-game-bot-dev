@@ -150,12 +150,44 @@ Three-layer recovery when rope fails at certain X positions:
 2. **Layout-guided search walk** — After 3 local failures, walk to known-good X from layout graph (up to 2 search walks)
 3. **Exhaustion** — After 8 total rope failures, accept current Y and stop
 
+## Movement Telemetry
+
+The `MovementState` singleton (`src/common/movement_state.py`) provides real-time observation of Move/Adjust operations via the API server and MCP tools.
+
+**Tracked data**:
+- Active operation type (Move/Adjust)
+- Target position
+- Current position
+- Error magnitude and direction
+- EMA velocity estimate
+- Step count and phase
+- Position history ring buffer
+
+**Access**:
+- API: `GET /bot/movement`
+- MCP: `get_movement_state()`
+- Internal: `MovementState.get_instance()`
+
+**Usage for debugging**:
+- Call `get_movement_state()` repeatedly (every 200-500ms) to watch an Adjust converge
+- Red flags: error > 0.01 (not converging), step count > 20 (oscillating), velocity = 0 (stuck)
+- Compare actual deceleration coast vs predicted to tune `_DECEL_TIME`
+
+## Known Gotchas
+
+- **ROPE_KEY vs JAGUAR_RUSH key swap**: In Wild Hunter, ROPE='alt' was historically assigned to Jaguar Rush in-game while JAGUAR_RUSH='4' was actually Rope. The Adjust class needs `ROPE_KEY = Key.ROPE` override since BaseAdjust defaults to 'alt'.
+- **Performance profiles**: VM timing multiplier scales all delays. A 0.022s decel coast on bare metal becomes ~0.077s on a 3.5x VM profile.
+- **Platform Y tolerance**: Different maps have different platform heights. The layout graph encodes this, but manual routines may need looser Y tolerance.
+
 ## Key Files
 
 | File | Purpose |
 |------|---------|
 | `src/routine/components.py` | Adjust, Move, base classes |
 | `src/common/movement.py` | MovementConfig, factories, rope_with_monitoring |
+| `src/common/movement_state.py` | MovementState singleton for telemetry |
 | `src/routine/layout.py` | Platform graph, A* shortest path |
 | `src/common/utils.py` | distance(), position utilities |
 | `src/common/timing.py` | Performance profiles, adaptive_sleep |
+| `src/common/events.py` | movement.adjust / movement.move events |
+| `docs/movement.md` | Movement system documentation |

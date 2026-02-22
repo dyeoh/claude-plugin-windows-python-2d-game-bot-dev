@@ -133,6 +133,26 @@ If the skill involves buff management or potion usage:
 6. **State diagram** — textual state machine for complex skills
 7. **Timing analysis** — expected delays, jitter impact, performance
 
+## Deployment & Verification
+
+After implementation, changes deploy to VMs via MCP tools:
+
+- **Maple (10.0.100.10)**: `git_pull()` then `restart_bot()`
+- **Maple2 (10.0.100.11)**: `write_file()` per changed file, then `restart_bot()` (SSH keys revoked)
+
+Verify designs can be tested live:
+- `get_movement_state()` — Real-time telemetry for movement changes
+- `test_template()` — Validate detection changes on live frames
+- `read_logs()` — Check for errors after deployment
+- `capture_screenshot()` — Visual confirmation
+
+## Key Gotchas
+
+- **ROPE vs JAGUAR_RUSH key bug**: In Wild Hunter, ROPE and JAGUAR_RUSH keys were historically swapped. Adjust needs `ROPE_KEY = Key.ROPE` override since BaseAdjust defaults to 'alt'.
+- **Performance profiles**: VMs use timing multipliers up to 3.5x. All timing constants are base values scaled by profile.
+- **Interception device IDs**: Installed as `.egg` in system site-packages. Device IDs default to 1/11 from egg; GUI fix overrides to correct frozen values (e.g., 5/15).
+- **Event bus**: `event_bus.emit()` is additive alongside `print()` — does NOT replace print output.
+
 ## Reference Files
 
 Always check these before designing:
@@ -141,3 +161,6 @@ Always check these before designing:
 - `src/common/action_types.py` — ActionType enum and timing table
 - `src/common/movement.py` — MovementConfig and factory functions
 - `src/common/events.py` — Structured event system for skill events
+- `src/common/movement_state.py` — MovementState singleton for telemetry
+- `docs/command-books.md` — Command book documentation
+- `docs/movement.md` — Movement system documentation

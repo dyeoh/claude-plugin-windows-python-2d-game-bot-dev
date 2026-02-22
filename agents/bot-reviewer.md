@@ -136,6 +136,9 @@ FAIL: Template match on every frame without pre-screening
 - Docstrings on public methods, comments only for non-obvious logic
 - Single responsibility — one function, one job
 - Explicit over compact — 5-line if/else > dense one-liner
+- `event_bus.emit()` alongside `print()` (additive, not replacement)
+- Game windows use `close_with_verification()` (not blind ESC presses)
+- Cash Shop operations: always travel to town (Henesys) first
 
 ## Confidence Threshold
 

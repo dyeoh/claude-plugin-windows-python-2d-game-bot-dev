@@ -93,22 +93,37 @@ For position-critical detection (player tracking on minimap):
 
 ### Rune Solver Analysis
 
-Three backends, selectable via GUI:
+Two modes with automatic fallback:
 
-1. **API Solver** — POST screenshot to external service
+**1. API Solver** (primary) — POST screenshot to external service at 172.16.11.230:8001
    - Crop region: `frame[143:371, 381:957]`
    - Encode as PNG, POST to `/solve`
    - Returns arrow direction list
+   - Fastest and most reliable when network available
 
-2. **Local CV Solver** — Sobel gradient analysis
-   - Grayscale → Sobel X/Y → gradient magnitude/direction
-   - Trace gradient flow to determine arrow direction
-   - Contour fallback if gradient tracing fails
-   - Expects exactly 4 arrows; retries on fewer
+**2. Local CV Solver** (fallback) — 4-strategy cascade, tries each in order:
+   1. **Hue gradient** — HSV hue channel gradient analysis for arrow direction
+   2. **Brightness gradient** — Grayscale intensity gradient analysis
+   3. **Contour moment** — Shape contour analysis with moment-based direction
+   4. **Edge hull** — Canny edge detection with convex hull direction
+   - Each strategy independently detects arrows
+   - Cascade advances when a strategy finds fewer than 4 arrows
+   - Expects exactly 4 arrows total
 
-3. **TF Model** (legacy) — Deep learning inference
+**3. TF Model** (legacy, deprecated) — Deep learning inference
    - HSV color filter → Canny edge → TF inference → class+bbox
    - `MIN_CONFIDENCE = 0.5`, max 4 detections
+
+**Spinning runes** indicate bot-like behavior detection by the game server. Usually caused by virtual inputs (not Interception) or suspicious movement patterns.
+
+### MCP Template Testing
+
+When MCP tools are available, use them for live template testing:
+
+- `test_template(template, threshold)` — Test if a template matches the current frame. Returns match count and positions. Use to validate detection reliability across different game states.
+- `create_template(name, x, y, w, h)` — Crop a region from the current frame and save as a new template. Use to create templates for new UI elements or update stale templates.
+- `capture_screenshot(region="x,y,w,h")` — Capture a specific region for analysis
+- `list_templates(subdir)` — Browse existing templates by category
 
 ## Deliverables
 
